@@ -21,5 +21,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, String
 
     // Find reservation by student cin
     @Query("SELECT r FROM Reservation r JOIN r.etudiants e WHERE e.cin = :cinEtudiant")
-    Reservation findReservationByCinEtudiant(@Param("cinEtudiant") Long cinEtudiant);
+    List<Reservation> findReservationsByCinEtudiant(@Param("cinEtudiant") Long cinEtudiant);
 }

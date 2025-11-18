@@ -77,26 +77,34 @@ public class ReservationServiceImpl implements IReservationService {
     @Override
     public Reservation annulerReservation(long cinEtudiant) {
         log.info("Annulation de la réservation de l'étudiant avec CIN: {}", cinEtudiant);
-
-        Reservation reservation = reservationRepository.findReservationByCinEtudiant(cinEtudiant);
-        if (reservation == null) {
+        // Fetch all reservations for this student
+        List<Reservation> reservations = reservationRepository.findReservationsByCinEtudiant(cinEtudiant);
+        if (reservations == null || reservations.isEmpty()) {
             throw new RuntimeException("Aucune réservation trouvée pour l'étudiant avec le CIN: " + cinEtudiant);
         }
 
-        // Update reservation state to invalid
-        reservation.setEstValide(false);
+        // Find the Etudiant entity once
+        Etudiant etudiant = etudiantRepository.findByCin(cinEtudiant)
+                .orElseThrow(() -> new RuntimeException("Étudiant non trouvé avec le CIN: " + cinEtudiant));
 
-        // Disassociate student
-        if (reservation.getEtudiants() != null) {
-            Etudiant etudiant = etudiantRepository.findByCin(cinEtudiant)
-                    .orElseThrow(() -> new RuntimeException("Étudiant non trouvé avec le CIN: " + cinEtudiant));
-            reservation.getEtudiants().remove(etudiant);
+        Reservation lastSaved = null;
+        for (Reservation reservation : reservations) {
+            // Mark invalid
+            reservation.setEstValide(false);
+
+            // Remove student from reservation set
+            if (reservation.getEtudiants() != null) {
+                reservation.getEtudiants().remove(etudiant);
+            }
+
+            // Disassociate chamber
+            reservation.setChambre(null);
+
+            lastSaved = reservationRepository.save(reservation);
         }
 
-        // Disassociate chamber
-        reservation.setChambre(null);
-
-        return reservationRepository.save(reservation);
+        // Return the last processed reservation (controller expects a single Reservation)
+        return lastSaved;
     }
 
     // Part 5: Get reservations by academic year and university name
