@@ -1,5 +1,6 @@
 package org.example.gestionfoyer.services;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,9 +24,10 @@ public class SchedulerService {
     /**
      * Part 6: Scheduler Service
      * Displays all unreserved chambers for the current academic year for all universities
-     * Scheduled to run daily at 2:00 AM (02:00:00)
+     * Scheduled to run every 60 seconds (60000 ms)
      */
-    @Scheduled(cron = "0 0 2 * * *")
+    @Scheduled(fixedRate = 60000)
+    @Transactional
     public void displayChambresNonReserveesPourToutesUniversites() {
         log.info("========== PART 6: SCHEDULER - START ==========");
         log.info("Fetching all universities...");
