@@ -11,7 +11,6 @@ import org.example.gestionfoyer.repositories.ChambreRepository;
 import org.example.gestionfoyer.repositories.UniversiteRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
