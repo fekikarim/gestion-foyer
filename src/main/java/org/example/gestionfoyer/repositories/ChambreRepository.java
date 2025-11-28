@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 import org.example.gestionfoyer.entities.Chambre;
 import org.example.gestionfoyer.entities.TypeChambre;
 import java.util.List;
-import java.util.Date;
 
 @Repository
 public interface ChambreRepository extends JpaRepository<Chambre, Long> {
