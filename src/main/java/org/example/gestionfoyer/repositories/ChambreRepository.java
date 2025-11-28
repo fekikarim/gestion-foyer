@@ -30,4 +30,32 @@ public interface ChambreRepository extends JpaRepository<Chambre, Long> {
            "(SELECT r.chambre.idChambre FROM Reservation r WHERE r.estValide = true)")
     List<Chambre> findChambresNonReserveParNomUniversiteEtType(@Param("nomUniversite") String nomUniversite,
                                                                @Param("typeC") TypeChambre typeC);
+
+    // Find unreserved chambers by university name and type with JOIN FETCH to avoid N+1 queries
+    @Query("SELECT DISTINCT c FROM Chambre c " +
+           "LEFT JOIN FETCH c.bloc b " +
+           "LEFT JOIN FETCH b.foyer f " +
+           "LEFT JOIN FETCH f.universite u " +
+           "WHERE u.nomUniversite = :nomUniversite " +
+           "AND c.typeC = :typeC " +
+           "AND c.idChambre NOT IN " +
+           "(SELECT r.chambre.idChambre FROM Reservation r WHERE r.estValide = true)")
+    List<Chambre> findChambresNonReserveParNomUniversiteEtTypeFetch(@Param("nomUniversite") String nomUniversite,
+                                                                     @Param("typeC") TypeChambre typeC);
+
+    // Count total chambers
+    @Query("SELECT COUNT(c) FROM Chambre c")
+    long countTotalChambres();
+
+    // Count reserved chambers (chambers with at least one valid reservation)
+    @Query("SELECT COUNT(DISTINCT c) FROM Chambre c " +
+           "JOIN c.reservations r " +
+           "WHERE r.estValide = true")
+    long countChambresReservees();
+
+    // Count unreserved chambers
+    @Query("SELECT COUNT(c) FROM Chambre c " +
+           "WHERE c.idChambre NOT IN " +
+           "(SELECT DISTINCT r.chambre.idChambre FROM Reservation r WHERE r.estValide = true)")
+    long countChambresNonReservees();
 }

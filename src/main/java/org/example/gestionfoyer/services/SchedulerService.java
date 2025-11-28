@@ -25,6 +25,9 @@ public class SchedulerService {
      * Part 6: Scheduler Service
      * Displays all unreserved chambers for the current academic year for all universities
      * Scheduled to run every 60 seconds (60000 ms)
+     * 
+     * Uses JPQL queries for efficient database operations following the class diagram:
+     * Universite (1) <-> (1) Foyer (1) -> (*) Bloc (1) -> (*) Chambre (1) -> (*) Reservation
      */
     @Scheduled(fixedRate = 60000)
     @Transactional
@@ -42,24 +45,25 @@ public class SchedulerService {
 
         log.info("Found {} universities", universites.size());
 
-        // For each university, get unreserved chambers for each type
+        // For each university, get unreserved chambers for each type using JPQL
         for (Universite universite : universites) {
             log.info("========================================");
             log.info("University: {} (ID: {})", universite.getNomUniversite(), universite.getIdUniversite());
             log.info("Address: {}", universite.getAdresse());
             log.info("========================================");
 
-            // Get unreserved chambers for each type in this university
+            // Get unreserved chambers for each type in this university using JPQL with JOIN FETCH
             for (TypeChambre type : TypeChambre.values()) {
+                // Using JPQL query with JOIN FETCH to avoid N+1 problem
                 List<Chambre> chambresNonReservees = chambreRepository
-                        .findChambresNonReserveParNomUniversiteEtType(universite.getNomUniversite(), type);
+                        .findChambresNonReserveParNomUniversiteEtTypeFetch(universite.getNomUniversite(), type);
 
                 if (chambresNonReservees.isEmpty()) {
                     log.info("  Type [{}]: No unreserved chambers", type);
                 } else {
                     log.info("  Type [{}]: {} unreserved chamber(s)", type, chambresNonReservees.size());
 
-                    // Display details of each unreserved chamber
+                    // Display details of each unreserved chamber (bloc already fetched via JOIN FETCH)
                     for (Chambre chambre : chambresNonReservees) {
                         log.info("    - Chamber #{} (ID: {}) in Bloc: {}",
                                 chambre.getNumeroChambre(),
@@ -72,13 +76,10 @@ public class SchedulerService {
             log.info("");
         }
 
-        // Summary statistics
-        long totalChambres = chambreRepository.findAll().size();
-        long totalReserved = chambreRepository.findAll().stream()
-                .filter(c -> c.getReservations() != null && c.getReservations().stream()
-                        .anyMatch(r -> r.getEstValide() != null && r.getEstValide()))
-                .count();
-        long totalUnreserved = totalChambres - totalReserved;
+        // Summary statistics using JPQL COUNT queries (efficient single queries)
+        long totalChambres = chambreRepository.countTotalChambres();
+        long totalReserved = chambreRepository.countChambresReservees();
+        long totalUnreserved = chambreRepository.countChambresNonReservees();
 
         log.info("========================================");
         log.info("SUMMARY STATISTICS");
