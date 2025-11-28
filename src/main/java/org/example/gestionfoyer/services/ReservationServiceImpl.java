@@ -11,7 +11,7 @@ import org.example.gestionfoyer.repositories.ChambreRepository;
 import org.example.gestionfoyer.repositories.EtudiantRepository;
 
 import java.util.List;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -63,7 +63,7 @@ public class ReservationServiceImpl implements IReservationService {
         Reservation reservation = new Reservation();
         reservation.setIdReservation(idReservation);
         reservation.setEstValide(true);
-        reservation.setAnneeUniversitaire(new Date());
+        reservation.setAnneeUniversitaire(LocalDate.now());
         reservation.setChambre(chambre);
 
         Set<Etudiant> etudiants = new HashSet<>();
@@ -109,7 +109,7 @@ public class ReservationServiceImpl implements IReservationService {
 
     // Part 5: Get reservations by academic year and university name
     @Override
-    public List<Reservation> getReservationParAnneeUniversitaireEtNomUniversite(Date anneeUniversitaire, String nomUniversite) {
+    public List<Reservation> getReservationParAnneeUniversitaireEtNomUniversite(LocalDate anneeUniversitaire, String nomUniversite) {
         log.info("Récupération des réservations pour l'année universitaire {} et l'université {}", anneeUniversitaire, nomUniversite);
         return reservationRepository.findReservationsByAnneeAndUniversite(anneeUniversitaire, nomUniversite);
     }

@@ -2,7 +2,7 @@ package org.example.gestionfoyer.services;
 
 import org.example.gestionfoyer.entities.Reservation;
 import java.util.List;
-import java.util.Date;
+import java.time.LocalDate;
 
 public interface IReservationService {
     List<Reservation> retrieveAllReservation();
@@ -13,5 +13,5 @@ public interface IReservationService {
     // Part 5: Cancel reservation by student cin
     Reservation annulerReservation(long cinEtudiant);
     // Part 5: Get reservations by academic year and university name
-    List<Reservation> getReservationParAnneeUniversitaireEtNomUniversite(Date anneeUniversitaire, String nomUniversite);
+    List<Reservation> getReservationParAnneeUniversitaireEtNomUniversite(LocalDate anneeUniversitaire, String nomUniversite);
 }

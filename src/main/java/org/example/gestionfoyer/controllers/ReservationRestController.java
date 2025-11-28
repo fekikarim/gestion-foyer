@@ -8,7 +8,7 @@ import org.example.gestionfoyer.entities.Reservation;
 import org.example.gestionfoyer.services.IReservationService;
 
 import java.util.List;
-import java.util.Date;
+import java.time.LocalDate;
 
 @RestController
 @AllArgsConstructor
@@ -55,9 +55,9 @@ public class ReservationRestController {
     @GetMapping("/get-reservation-par-annee-et-universite")
     @Operation(description = "Récupérer les réservations d'une année universitaire et d'une université")
     public List<Reservation> getReservationParAnneeUniversitaireEtNomUniversite(
-            @RequestParam("anneeUniversitaire") Long anneeUniversitaire,
+            @RequestParam("anneeUniversitaire") String anneeUniversitaire,
             @RequestParam("nomUniversite") String nomUniversite) {
-        Date date = new Date(anneeUniversitaire);
+        LocalDate date = LocalDate.parse(anneeUniversitaire);
         return reservationService.getReservationParAnneeUniversitaireEtNomUniversite(date, nomUniversite);
     }
 }

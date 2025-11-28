@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -29,8 +29,7 @@ public class Etudiant implements Serializable {
 
     private String ecole;
 
-    @Temporal(TemporalType.DATE)
-    private Date dateNaissance;
+    private LocalDate dateNaissance;
 
     // Relation ManyToMany avec Reservation (child side)
     @ManyToMany(mappedBy = "etudiants", cascade = CascadeType.ALL)

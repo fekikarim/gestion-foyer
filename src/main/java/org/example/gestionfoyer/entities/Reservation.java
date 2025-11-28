@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -20,8 +20,7 @@ public class Reservation implements Serializable {
     @Id
     private String idReservation;
 
-    @Temporal(TemporalType.DATE)
-    private Date anneeUniversitaire;
+    private LocalDate anneeUniversitaire;
 
     private Boolean estValide;
 
