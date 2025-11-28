@@ -32,62 +32,26 @@ public class SchedulerService {
     @Scheduled(fixedRate = 60000)
     @Transactional
     public void displayChambresNonReserveesPourToutesUniversites() {
-        log.info("========== PART 6: SCHEDULER - START ==========");
-        log.info("Fetching all universities...");
 
         List<Universite> universites = universiteRepository.findAll();
 
         if (universites.isEmpty()) {
             log.warn("No universities found in the database");
-            log.info("========== PART 6: SCHEDULER - END ==========");
             return;
         }
 
-        log.info("Found {} universities", universites.size());
-
         // For each university, get unreserved chambers for each type using JPQL
         for (Universite universite : universites) {
-            log.info("========================================");
-            log.info("University: {} (ID: {})", universite.getNomUniversite(), universite.getIdUniversite());
-            log.info("Address: {}", universite.getAdresse());
-            log.info("========================================");
+            log.info("Université: {}", universite.getNomUniversite());
 
             // Get unreserved chambers for each type in this university using JPQL with JOIN FETCH
             for (TypeChambre type : TypeChambre.values()) {
-                // Using JPQL query with JOIN FETCH to avoid N+1 problem
                 List<Chambre> chambresNonReservees = chambreRepository
                         .findChambresNonReserveParNomUniversiteEtTypeFetch(universite.getNomUniversite(), type);
 
-                if (chambresNonReservees.isEmpty()) {
-                    log.info("  Type [{}]: No unreserved chambers", type);
-                } else {
-                    log.info("  Type [{}]: {} unreserved chamber(s)", type, chambresNonReservees.size());
-
-                    // Display details of each unreserved chamber (bloc already fetched via JOIN FETCH)
-                    for (Chambre chambre : chambresNonReservees) {
-                        log.info("    - Chamber #{} (ID: {}) in Bloc: {}",
-                                chambre.getNumeroChambre(),
-                                chambre.getIdChambre(),
-                                chambre.getBloc() != null ? chambre.getBloc().getNomBloc() : "N/A");
-                    }
-                }
+                log.info("  Type {} : {} chambres non réservées", type, chambresNonReservees.size());
             }
-
-            log.info("");
         }
-
-        // Summary statistics using JPQL COUNT queries (efficient single queries)
-        long totalChambres = chambreRepository.countTotalChambres();
-        long totalReserved = chambreRepository.countChambresReservees();
-        long totalUnreserved = chambreRepository.countChambresNonReservees();
-
-        log.info("========================================");
-        log.info("SUMMARY STATISTICS");
-        log.info("========================================");
-        log.info("Total Chambers: {}", totalChambres);
-        log.info("Reserved Chambers: {}", totalReserved);
-        log.info("Unreserved Chambers: {}", totalUnreserved);
-        log.info("========== PART 6: SCHEDULER - END ==========");
     }
 
     /**
