@@ -27,6 +27,7 @@ public class Reservation implements Serializable {
 
     // Relation ManyToMany avec Etudiant
     @ManyToMany(cascade = CascadeType.ALL)
+    @JsonIgnore
     @ToString.Exclude
     private Set<Etudiant> etudiants;
 

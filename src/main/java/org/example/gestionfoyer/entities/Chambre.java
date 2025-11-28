@@ -33,6 +33,7 @@ public class Chambre implements Serializable {
 
     // Relation OneToMany avec Reservation
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "chambre")
+    @JsonIgnore
     @ToString.Exclude
     private Set<Reservation> reservations;
 }

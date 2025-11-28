@@ -14,8 +14,13 @@ public interface ReservationRepository extends JpaRepository<Reservation, String
     // Note: L'ID est de type String pour Reservation
 
     // Find reservations by academic year and university name
-    @Query("SELECT r FROM Reservation r WHERE r.anneeUniversitaire = :anneeUniversitaire " +
-           "AND r.chambre.bloc.foyer.universite.nomUniversite = :nomUniversite")
+    @Query("SELECT DISTINCT r FROM Reservation r " +
+           "INNER JOIN r.chambre c " +
+           "INNER JOIN c.bloc b " +
+           "INNER JOIN b.foyer f " +
+           "INNER JOIN f.universite u " +
+           "WHERE r.anneeUniversitaire = :anneeUniversitaire " +
+           "AND u.nomUniversite = :nomUniversite")
     List<Reservation> findReservationsByAnneeAndUniversite(@Param("anneeUniversitaire") Date anneeUniversitaire,
                                                            @Param("nomUniversite") String nomUniversite);
 

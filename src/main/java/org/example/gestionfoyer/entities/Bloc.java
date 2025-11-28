@@ -32,6 +32,7 @@ public class Bloc implements Serializable {
 
     // Relation OneToMany avec Chambre
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bloc")
+    @JsonIgnore
     @ToString.Exclude
     private Set<Chambre> chambres;
 }

@@ -32,6 +32,7 @@ public class Foyer implements Serializable {
 
     // Relation OneToMany avec Bloc
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "foyer")
+    @JsonIgnore
     @ToString.Exclude
     private Set<Bloc> blocs;
 }
