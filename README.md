@@ -50,6 +50,13 @@ gestion-foyer/
 │   │   │   ├── ReservationRestController.java
 │   │   │   ├── SchedulerRestController.java
 │   │   │   └── UniversiteRestController.java
+│   │   │   ├── dto/
+│   │   │   │   ├── bloc/
+│   │   │   │   ├── chambre/
+│   │   │   │   ├── etudiant/
+│   │   │   │   ├── foyer/
+│   │   │   │   ├── reservation/
+│   │   │   │   └── universite/
 │   │   │   ├── entities/
 │   │   │   │   ├── Bloc.java
 │   │   │   │   ├── Chambre.java
@@ -58,6 +65,13 @@ gestion-foyer/
 │   │   │   │   ├── Reservation.java
 │   │   │   │   ├── TypeChambre.java
 │   │   │   │   └── Universite.java
+│   │   │   ├── mappers/
+│   │   │   │   ├── BlocMapper.java
+│   │   │   │   ├── ChambreMapper.java
+│   │   │   │   ├── EtudiantMapper.java
+│   │   │   │   ├── FoyerMapper.java
+│   │   │   │   ├── ReservationMapper.java
+│   │   │   │   └── UniversiteMapper.java
 │   │   │   ├── repositories/
 │   │   │   │   ├── BlocRepository.java
 │   │   │   │   ├── ChambreRepository.java
@@ -84,6 +98,8 @@ gestion-foyer/
 │   └── test/
 │       └── java/org/example/gestionfoyer/
 │           └── GestionFoyerApplicationTests.java
+│       └── resources/
+│           └── application.properties
 ├── pom.xml
 ├── README.md
 └── database_script.sql
@@ -117,12 +133,12 @@ spring.datasource.password=your_password
 
 ### Step 3: Install Dependencies
 ```bash
-mvn clean install
+./mvnw clean install
 ```
 
 ### Step 4: Run the Application
 ```bash
-mvn spring-boot:run
+./mvnw spring-boot:run
 ```
 
 Alternatively, run from your IDE:
@@ -308,6 +324,29 @@ Import the provided `Gestion-Foyer-Postman-Collection.json` into Postman to test
 8. Test AOP functionality with `/aop/test-execution-time`
 9. Test scheduler with `/scheduler/display-chambres-non-reservees`
 10. Perform GET, PUT, DELETE operations
+
+## 📦 DTOs & Mappers (New)
+
+To optimize payloads and avoid exposing full JPA entities (and bidirectional relations), this project now includes DTOs and simple mappers.
+
+- DTO packages: `src/main/java/org/example/gestionfoyer/dto/**`
+  - Requests: `*UpsertRequest` / `ReservationUpdateRequest`
+  - Responses: `*Response`
+- Mappers: `src/main/java/org/example/gestionfoyer/mappers/**`
+
+Note: the current REST controllers still accept/return entities (for backward compatibility with the existing endpoints and the Postman collection). The DTOs/mappers are ready to be used if you want to switch controller payloads to DTOs.
+
+## ✅ Running Tests (Updated)
+
+Unit/integration tests can now run without MySQL thanks to an in-memory H2 configuration.
+
+- Test config: `src/test/resources/application.properties`
+- Dependency: H2 is added in `pom.xml` with `test` scope
+
+Run:
+```bash
+./mvnw test
+```
 
 ## 🐛 Troubleshooting
 
